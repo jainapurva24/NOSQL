@@ -1,0 +1,132 @@
+db.departments.insertMany([
+  { 
+    dept_no: 10, 
+    dept_name: "Account", 
+    location: ["Surat", "Bombay"], 
+    total_salary: { total_days: 30, amt: 50000 } 
+  
+  { 
+    dept_no: 20, 
+    dept_name: "HR", 
+    location: ["Bharuch"], 
+    total_salary: { total_days: 28, amt: 40000 } 
+  ])
+
+
+
+//Update data
+
+db.myCollection.updateOne(
+  { name: "Bob" }, 
+  { $set: { experience: 3 } }
+)
+
+
+//find
+
+db.myCollection.find({}, { name: 1, experience: 1 })
+
+//sort
+
+db.myCollection.find().sort({ experience: -1 })
+
+
+//multiple location
+
+db.departments.find({ location: { $size: 2 } })
+
+
+//starting with A
+
+db.departments.find({ dept_name: { $regex: /^A/ } })
+
+
+//ending with A
+
+db.departments.find({ dept_name: { $regex: /A$/ } })
+
+
+//Display the student name(s) whose merit are between 50 and 150.
+
+db.students.find(
+  { merit: { $gt: 50, $lt: 150 } },
+  { name: 1, _id: 0 }
+)
+
+
+
+//Display the student all details whose merit are between 50 and 150.
+
+db.students.find({ merit: { $gt: 50, $lt: 150 } })
+
+
+//Display all documents having more than two subjects.
+
+db.students.find(
+  { $expr: { $gt: [{ $size: "$subjects" }, 2] } }
+)
+
+
+//Display movie names whose director is Ashutosh Gowariker
+
+db.movie.find({ directors: "Ashutosh Gowariker" }, { name: 1, _id: 0 })
+
+
+//Display the cust_name of customers which are in VALSAD AND SURAT. 
+
+db.customer.find(
+  { address: { $in: ["VALSAD", "SURAT"] } },
+  { cust_name: 1, _id: 0 }
+)
+
+
+
+//Retrieve the documents in country collection where population is greater than 1 lakh
+
+db.countries.find({ population: { $gt: 100000 } })
+
+
+//Retrieve documents where language is English and continent is Asia.
+
+db.countries.find({ language: "English", continent: "Asia"})
+
+
+//Retrieve documents where capital is “Washington D.C.” and population is either 2 lakhs or 1
+lakh
+
+db.countries.find({capital: "Washington, D.C.", population: { $in: [100000, 200000] }})
+
+
+//Retrieve documents capital is Dubai and Language can be Arabic or English and name is UAE.
+
+db.countries.find(
+  {
+    capital: "Dubai",
+    language: { $in: ["Arabic", "English"] },
+    name: "UAE"
+  }
+)
+
+
+//Retrieve documents where capital is either “Washington D.C.” or “Italy”.
+
+db.countries.find({capital: { $in: ["Washington, D.C.", "Italy"] }})
+
+
+
+//Find the Total of all subject marks
+
+db.student.aggregate([ { $addFields: { totalMarks: { $sum: "$marks" } } }])
+
+
+//Generate a merit list of all students and display only roll no and name
+
+db.student.aggregate([
+{ $addFields: { totalMarks: { $sum: "$marks" } } }, { $sort: { totalMarks: -1 } },
+{ $project: { enroll: 1, name: 1, _id: 0 } } ])
+
+
+//Display the count of "male" and "female" students.
+
+db.student.aggregate([{ $group: { _id: "$gender", count: { $sum: 1 } } }])
+
